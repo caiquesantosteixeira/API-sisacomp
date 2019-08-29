@@ -46,12 +46,14 @@ namespace API_sisacomp.Controllers
         public async Task<ActionResult<List<Materia>>> GetMateriaByTurma(int id)
         {
             var materia = await (from mat in _context.Materia
-                                 where mat.IdTurma == id
+                                 join turmaMateria in _context.MateriaTurma on mat.IdMateria equals turmaMateria.IdMateria
+                                 where turmaMateria.IdTurma == id
                                  select new Materia
                                  {
                                      IdMateria = mat.IdMateria,
                                      Nome = mat.Nome,
-                                     IdTurma = mat.IdTurma
+                                     IdMateriaTurma = turmaMateria.Id,
+                                     IdProfessorMateria = _context.ProfessorMateria.FirstOrDefault(a => a.IdMateria == mat.IdMateria)
                                  }).OrderByDescending(a => a.IdMateria).ToListAsync();
 
             if (materia == null)

@@ -9,7 +9,7 @@ namespace API_sisacomp.Models
         {
             Agenda = new HashSet<Agenda>();
             Aluno = new HashSet<Aluno>();
-            Materia = new HashSet<Materia>();
+            MateriaTurma = new HashSet<MateriaTurma>();
             TurmaNoticia = new HashSet<TurmaNoticia>();
         }
 
@@ -17,12 +17,12 @@ namespace API_sisacomp.Models
         public int Serie { get; set; }
         public string Letra { get; set; }
         public int Turno { get; set; }
-        public int TipoSerie { get; set; }
         public int Ativo { get; set; }
+        public int TipoSerie { get; set; }
 
         public virtual ICollection<Agenda> Agenda { get; set; }
         public virtual ICollection<Aluno> Aluno { get; set; }
-        public virtual ICollection<Materia> Materia { get; set; }
+        public virtual ICollection<MateriaTurma> MateriaTurma { get; set; }
         public virtual ICollection<TurmaNoticia> TurmaNoticia { get; set; }
     }
 }

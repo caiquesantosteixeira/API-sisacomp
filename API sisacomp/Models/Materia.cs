@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API_sisacomp.Models
 {
@@ -7,18 +8,28 @@ namespace API_sisacomp.Models
     {
         public Materia()
         {
+            MateriaTurma = new HashSet<MateriaTurma>();
             Nota = new HashSet<Nota>();
-            Professor = new HashSet<Professor>();
+            ProfessorMateria = new HashSet<ProfessorMateria>();
             Prova = new HashSet<Prova>();
         }
 
         public int IdMateria { get; set; }
         public string Nome { get; set; }
-        public int IdTurma { get; set; }
         public int Ativo { get; set; }
-        public virtual Turma IdTurmaNavigation { get; set; }
+
+        [NotMapped]
+        public int IdTurma { get; set; }
+
+        [NotMapped]
+        public int IdMateriaTurma { get; set; }
+
+        [NotMapped]
+        public ProfessorMateria IdProfessorMateria { get; set; }
+
+        public virtual ICollection<MateriaTurma> MateriaTurma { get; set; }
         public virtual ICollection<Nota> Nota { get; set; }
-        public virtual ICollection<Professor> Professor { get; set; }
+        public virtual ICollection<ProfessorMateria> ProfessorMateria { get; set; }
         public virtual ICollection<Prova> Prova { get; set; }
     }
 }

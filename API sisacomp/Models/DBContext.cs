@@ -19,9 +19,11 @@ namespace API_sisacomp.Models
         public virtual DbSet<Agenda> Agenda { get; set; }
         public virtual DbSet<Aluno> Aluno { get; set; }
         public virtual DbSet<Materia> Materia { get; set; }
+        public virtual DbSet<MateriaTurma> MateriaTurma { get; set; }
         public virtual DbSet<Nota> Nota { get; set; }
         public virtual DbSet<Noticia> Noticia { get; set; }
         public virtual DbSet<Professor> Professor { get; set; }
+        public virtual DbSet<ProfessorMateria> ProfessorMateria { get; set; }
         public virtual DbSet<Prova> Prova { get; set; }
         public virtual DbSet<Reclamacao> Reclamacao { get; set; }
         public virtual DbSet<Responsavel> Responsavel { get; set; }
@@ -44,7 +46,7 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Administrador>(entity =>
             {
                 entity.HasKey(e => e.IdAdministrador)
-                    .HasName("PK__administ__2B3E34A867DF7264");
+                    .HasName("PK__administ__2B3E34A8DB883792");
 
                 entity.ToTable("administrador");
 
@@ -64,7 +66,7 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Agenda>(entity =>
             {
                 entity.HasKey(e => e.IdAgenda)
-                    .HasName("PK__Agenda__FACC499E147646CA");
+                    .HasName("PK__Agenda__FACC499E486DD526");
 
                 entity.Property(e => e.Data)
                     .HasColumnName("data")
@@ -90,7 +92,7 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Aluno>(entity =>
             {
                 entity.HasKey(e => e.IdAluno)
-                    .HasName("PK__Aluno__8092FCB31B21FBDB");
+                    .HasName("PK__Aluno__8092FCB3C5616E66");
 
                 entity.Property(e => e.Cpf)
                     .IsRequired()
@@ -112,10 +114,6 @@ namespace API_sisacomp.Models
                     .HasMaxLength(14)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Ativo)
-                     .IsRequired()
-                     .IsUnicode(false);
-
                 entity.HasOne(d => d.IdResponsavelNavigation)
                     .WithMany(p => p.Aluno)
                     .HasForeignKey(d => d.IdResponsavel)
@@ -132,19 +130,24 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Materia>(entity =>
             {
                 entity.HasKey(e => e.IdMateria)
-                    .HasName("PK__Materia__EC17467034B46C0A");
+                    .HasName("PK__Materia__EC17467060CD4679");
 
                 entity.Property(e => e.Nome)
                     .IsRequired()
                     .HasMaxLength(20)
                     .IsUnicode(false);
+            });
 
-                entity.Property(e => e.Ativo)
-                    .IsRequired()
-                    .IsUnicode(false);
+            modelBuilder.Entity<MateriaTurma>(entity =>
+            {
+                entity.HasOne(d => d.IdMateriaNavigation)
+                    .WithMany(p => p.MateriaTurma)
+                    .HasForeignKey(d => d.IdMateria)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("turm_materia");
 
                 entity.HasOne(d => d.IdTurmaNavigation)
-                    .WithMany(p => p.Materia)
+                    .WithMany(p => p.MateriaTurma)
                     .HasForeignKey(d => d.IdTurma)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("turma_materia");
@@ -153,7 +156,7 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Nota>(entity =>
             {
                 entity.HasKey(e => e.IdNota)
-                    .HasName("PK__Nota__4B2ACFF244246BA8");
+                    .HasName("PK__Nota__4B2ACFF2908A7878");
 
                 entity.Property(e => e.Nota1)
                     .HasColumnName("Nota")
@@ -178,7 +181,7 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Noticia>(entity =>
             {
                 entity.HasKey(e => e.IdNoticia)
-                    .HasName("PK__Noticia__A6C949A8B416D517");
+                    .HasName("PK__Noticia__A6C949A89642AE5C");
 
                 entity.Property(e => e.CaminhoImagem)
                     .HasMaxLength(150)
@@ -204,7 +207,7 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Professor>(entity =>
             {
                 entity.HasKey(e => e.IdProfessor)
-                    .HasName("PK__Professo__9D84BE1BB9F1461D");
+                    .HasName("PK__Professo__9D84BE1BA56D90A8");
 
                 entity.Property(e => e.Cpf)
                     .IsRequired()
@@ -216,25 +219,31 @@ namespace API_sisacomp.Models
                     .HasMaxLength(150)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Senha)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.Telefone)
                     .IsRequired()
-                    .HasMaxLength(11)
+                    .HasMaxLength(14)
                     .IsUnicode(false);
+            });
 
+            modelBuilder.Entity<ProfessorMateria>(entity =>
+            {
                 entity.HasOne(d => d.IdMateriaNavigation)
-                    .WithMany(p => p.Professor)
+                    .WithMany(p => p.ProfessorMateria)
                     .HasForeignKey(d => d.IdMateria)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("professor_materia");
+
+                entity.HasOne(d => d.IdProfessorNavigation)
+                    .WithMany(p => p.ProfessorMateria)
+                    .HasForeignKey(d => d.IdProfessor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("prof");
             });
 
             modelBuilder.Entity<Prova>(entity =>
             {
                 entity.HasKey(e => e.IdProva)
-                    .HasName("PK__Prova__C36300682DE3DC57");
+                    .HasName("PK__Prova__C36300682A77917D");
 
                 entity.HasOne(d => d.IdMateriaNavigation)
                     .WithMany(p => p.Prova)
@@ -246,7 +255,7 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Reclamacao>(entity =>
             {
                 entity.HasKey(e => e.IdReclamacao)
-                    .HasName("PK__Reclamac__DF87F2464D6A18C7");
+                    .HasName("PK__Reclamac__DF87F24644E2190E");
 
                 entity.Property(e => e.Texto)
                     .HasMaxLength(400)
@@ -266,7 +275,7 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Responsavel>(entity =>
             {
                 entity.HasKey(e => e.IdResponsavel)
-                    .HasName("PK__responsa__CDF1DCAD0886AD8D");
+                    .HasName("PK__responsa__CDF1DCADF658A885");
 
                 entity.ToTable("responsavel");
 
@@ -297,21 +306,18 @@ namespace API_sisacomp.Models
             modelBuilder.Entity<Turma>(entity =>
             {
                 entity.HasKey(e => e.IdTurma)
-                    .HasName("PK__Turma__C1ECFFC98B63908B");
+                    .HasName("PK__Turma__C1ECFFC9EC8405F7");
 
                 entity.Property(e => e.Letra)
                     .IsRequired()
                     .HasMaxLength(1)
                     .IsUnicode(false);
-                entity.Property(e => e.Ativo)
-                     .IsRequired()
-                     .IsUnicode(false);
             });
 
             modelBuilder.Entity<TurmaNoticia>(entity =>
             {
                 entity.HasKey(e => e.IdTurmaNoticia)
-                    .HasName("PK__TurmaNot__795419A7C9BD1DE0");
+                    .HasName("PK__TurmaNot__795419A731AC2463");
 
                 entity.HasOne(d => d.IdTurmaNavigation)
                     .WithMany(p => p.TurmaNoticia)

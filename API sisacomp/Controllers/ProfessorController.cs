@@ -39,8 +39,7 @@ namespace API_sisacomp.Controllers
                                        IdProfessor = prof.IdProfessor,
                                        Nome = prof.Nome,
                                        Cpf = prof.Cpf,
-                                       Telefone = prof.Telefone,
-                                       Senha = prof.Senha
+                                       Telefone = prof.Telefone
                                    }).OrderByDescending(a => a.IdProfessor).ToListAsync();
 
             
@@ -48,7 +47,7 @@ namespace API_sisacomp.Controllers
         }
 
         // PUT: api/Professor/5
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutProfessor( Professor professor)
         {
             
@@ -59,7 +58,7 @@ namespace API_sisacomp.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!ProfessorExists(professor.IdProfessor))
                 {
@@ -71,17 +70,23 @@ namespace API_sisacomp.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetProfessor", new { id = professor.IdProfessor }, professor);
         }
 
         // POST: api/Professor
         [HttpPost]
         public async Task<ActionResult<Professor>> PostProfessor(Professor professor)
         {
-            _context.Professor.Add(professor);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Professor.Add(professor);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProfessor", new { id = professor.IdProfessor }, professor);
+                return CreatedAtAction("GetProfessor", new { id = professor.IdProfessor }, professor);
+            }
+            catch (Exception ex) {
+                return NoContent();
+            }
         }
 
         // DELETE: api/Professor/5
