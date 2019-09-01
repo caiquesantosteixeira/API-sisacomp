@@ -68,6 +68,34 @@ namespace API_sisacomp.Controllers
             return alunos;
         }
 
+        [HttpGet]
+        [Route("turma")]
+        public async Task<ActionResult<List<RetornoAluno>>> GetAlunoByIdTurma(int idTurma)
+        {
+            var alunos = await (from aluno in _context.Aluno
+                                join Turma in _context.Turma on aluno.IdTurma equals Turma.IdTurma
+                                where aluno.IdTurma == idTurma
+                                select new RetornoAluno
+                                {
+                                    TurmaDoAluno = Turma,
+                                    Situacao = "Ok",
+                                    IdAluno = aluno.IdAluno,
+                                    IdTurma = aluno.IdTurma,
+                                    IdResponsavel = aluno.IdResponsavel,
+                                    Nome = aluno.Nome,
+                                    Cpf = aluno.Cpf,
+                                    DataNascimento = aluno.DataNascimento,
+                                    Ativo = aluno.Ativo,
+                                    Telefone = aluno.Telefone
+                                }).Take(20).OrderByDescending(a => a.IdAluno).ToListAsync();
+
+            if (alunos == null)
+            {
+                return NotFound();
+            }
+            return alunos;
+        }
+
         // PUT: api/Alunos/5
         [HttpPut]
         public async Task<IActionResult> PutAluno(Aluno aluno)
