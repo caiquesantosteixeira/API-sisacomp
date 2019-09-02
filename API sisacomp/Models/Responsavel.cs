@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API_sisacomp.Models
 {
@@ -17,6 +18,8 @@ namespace API_sisacomp.Models
         public string Telefone { get; set; }
         public int Ativo { get; set; }
         public string Senha { get; set; }
+        [NotMapped]
+        public List<Aluno> Filho { get; set; }
 
         public virtual ICollection<Aluno> Aluno { get; set; }
     }

@@ -109,6 +109,35 @@ namespace API_sisacomp.Controllers
             return responsavel;
         }
 
+        [HttpGet]
+        [Route("Login")]
+        public async Task<ActionResult<Responsavel>> GetResponsavel(string login, string senha)
+        {
+            try
+            {
+                var resps = await (from resp in _context.Responsavel
+                                   where resp.Cpf == login && resp.Senha == senha
+                                   select new Responsavel
+                                   {
+                                       IdResponsavel = resp.IdResponsavel,
+                                       Nome = resp.Nome,
+                                       Cpf = resp.Cpf,
+                                       Senha = resp.Senha,
+
+                                   }).Take(20).FirstOrDefaultAsync();
+                if (resps != null)
+                {
+                    resps.Filho = _context.Aluno.Where(a => a.IdResponsavel == resps.IdResponsavel).ToList();
+                }
+
+                return resps;
+            }
+            catch (Exception ex) {
+
+            }
+            return null;
+        }
+
         // PUT: api/Responsavels/5
         [HttpPut]
         public async Task<ActionResult<Retorno>> PutResponsavel(Responsavel responsavel)

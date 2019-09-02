@@ -24,7 +24,22 @@ namespace API_sisacomp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Professor>>> GetProfessor()
         {
-            return await _context.Professor.ToListAsync();
+            try
+            {
+                var professores = await (from prof in _context.Professor
+                                       select new Professor
+                                       {
+                                           IdProfessor = prof.IdProfessor,
+                                           Nome = prof.Nome,
+                                           Cpf = prof.Cpf,
+                                           Telefone = prof.Telefone
+                                       }).OrderByDescending(a => a.IdProfessor).ToListAsync();
+                return professores;
+            }
+            catch (Exception ex) {
+
+            }
+            return null;
         }
 
         // GET: api/Professor/5
@@ -45,6 +60,40 @@ namespace API_sisacomp.Controllers
             
             return professor;
         }
+
+        [HttpGet]
+        [Route("Login")]
+        public async Task<ActionResult<List<Professor>>> GetProfessor(string login, string senha)
+        {
+            try
+            {
+                var professor = await (from prof in _context.Professor
+                                       join profMateria in _context.ProfessorMateria on prof.IdProfessor equals profMateria.IdProfessor
+                                       join materia in _context.Materia on profMateria.IdMateria equals materia.IdMateria
+                                       join materiaTurma in _context.MateriaTurma on materia.IdMateria equals materiaTurma.IdMateria
+                                       join turma in _context.Turma on materiaTurma.IdTurma equals turma.IdTurma
+
+                                       where prof.Cpf == login && prof.Senha == senha
+                                       select new Professor
+                                       {
+                                           IdProfessor = prof.IdProfessor,
+                                           Nome = prof.Nome,
+                                           Cpf = prof.Cpf,
+                                           Senha = prof.Senha,
+                                           Materia = _context.Materia.Where(a =>a.IdMateria == materiaTurma.IdMateria).ToList(),
+                                       Turma = turma
+                                   }).Take(20).ToListAsync();
+                
+
+                return professor;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return null;
+        }
+
 
         // PUT: api/Professor/5
         [HttpPut]

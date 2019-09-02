@@ -45,23 +45,30 @@ namespace API_sisacomp.Controllers
         [Route("turma")]
         public async Task<ActionResult<List<Materia>>> GetMateriaByTurma(int id)
         {
-            var materia = await (from mat in _context.Materia
-                                 join turmaMateria in _context.MateriaTurma on mat.IdMateria equals turmaMateria.IdMateria
-                                 where turmaMateria.IdTurma == id
-                                 select new Materia
-                                 {
-                                     IdMateria = mat.IdMateria,
-                                     Nome = mat.Nome,
-                                     IdMateriaTurma = turmaMateria.Id,
-                                     IdProfessorMateria = _context.ProfessorMateria.FirstOrDefault(a => a.IdMateria == mat.IdMateria)
-                                 }).OrderByDescending(a => a.IdMateria).ToListAsync();
-
-            if (materia == null)
+            try
             {
-                return NotFound();
-            }
+                var materia = await (from mat in _context.Materia
+                                     join turmaMateria in _context.MateriaTurma on mat.IdMateria equals turmaMateria.IdMateria
+                                     where turmaMateria.IdTurma == id
+                                     select new Materia
+                                     {
+                                         IdMateria = mat.IdMateria,
+                                         Nome = mat.Nome,
+                                         IdMateriaTurma = turmaMateria.Id,
+                                         IdProfessorMateria = _context.ProfessorMateria.FirstOrDefault(a => a.IdMateria == mat.IdMateria)
+                                     }).OrderByDescending(a => a.IdMateria).ToListAsync();
 
-            return materia;
+                if (materia == null)
+                {
+                    return NotFound();
+                }
+
+
+                return materia;
+            }catch(Exception ex){
+                    
+            }
+            return null;
         }
 
         // PUT: api/Materias/5

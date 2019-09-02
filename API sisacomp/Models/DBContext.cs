@@ -197,11 +197,6 @@ namespace API_sisacomp.Models
                     .HasMaxLength(70)
                     .IsUnicode(false);
 
-                entity.HasOne(d => d.IdTurmaNoticiaNavigation)
-                    .WithMany(p => p.Noticia)
-                    .HasForeignKey(d => d.IdTurmaNoticia)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("NoticiaTurmaNoticia");
             });
 
             modelBuilder.Entity<Professor>(entity =>
@@ -222,6 +217,11 @@ namespace API_sisacomp.Models
                 entity.Property(e => e.Telefone)
                     .IsRequired()
                     .HasMaxLength(14)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Senha)
+                    .IsRequired()
+                    .HasMaxLength(128)
                     .IsUnicode(false);
             });
 
